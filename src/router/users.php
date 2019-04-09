@@ -331,7 +331,7 @@ $app->group('/profile', function () use ($app) {
 
     $app->post('/change-profile-picture', function ($request, $response, $args) {
         $image = $_FILES['photo'];
-        var_dump($image); die();
+        //var_dump($image); die();
         $profilePic = \Lib\Utilities::uploadImages($image['tmp_name'], $image['name'], 'public/assets/img/profiles/', uniqid());
         $user = Users::find(\Lib\App::getUserId());
         $user->profile_pic = str_replace('public', '', $profilePic['path']);
