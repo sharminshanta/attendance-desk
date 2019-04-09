@@ -1,0 +1,270 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Users List {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage User
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>User List</h2>
+                    <span>{{ count }} users found</span>
+                </div>
+                <div class="pull-right btn-areas">
+                    <a href="/users/add" class="btn btn-info">New User</a>
+                    {% if users is  not empty %}
+                        <a href="" class="btn btn-info" data-toggle="modal" data-target="#searchUser">Search User</a>
+                    {% elseif users is empty %}
+                        <a href="/users" class="btn btn-info">User List</a>
+                    {% endif %}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                {% if not users is empty %}
+                    <div class="modal fade" id="searchUser" tabindex="-1" role="dialog" aria-labelledby="searchUser">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                aria-hidden="true">×</span></button>
+                                    <h4 class="modal-title" id="searchUser">Search User</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form" method="get" action="/users">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="firstName">First Name</label>
+                                                    <input name="first_name" type="text" class="form-control"
+                                                           placeholder="First name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="lastName">Last Name</label>
+                                                    <input name="last_name" type="text" class="form-control"
+                                                           placeholder="Last name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label for="email">Email</label>
+                                                    <input name="email" type="email" class="form-control"
+                                                           placeholder="Email address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="gender">Gender</label>
+                                                    <select name="gender" class="form-control" style="color: grey">
+                                                        <option value="" hidden>Select one</option>
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                        <option value="others">Others</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="birthdate">Birth Date</label>
+                                                    <input name="birth_date" type="date" id="birthdate"
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="role">Role</label>
+                                                    <select name="role" class="form-control" style="color: grey">
+                                                        <option value="" hidden>Select one</option>
+                                                        <option value="1">Admin</option>
+                                                        <option value="2">Employee</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="department">Department</label>
+                                                    <select name="department" class="form-control" style="color: grey">
+                                                        <option value="" hidden>Select one</option>
+                                                        <option value="software engineering">Software Engineering
+                                                        </option>
+                                                        <option value="web design">Web Design</option>
+                                                        <option value="search engine optimization">Search Engine
+                                                            Optimization
+                                                        </option>
+                                                        <option value="administration & accounting">Administration &
+                                                            Accounting
+                                                        </option>
+                                                        <option value="administration">Administration</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="joindate">Joining Date</label>
+                                                    <input name="join_date" type="date" id="joindate"
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="website">Website</label>
+                                                    <input name="website" type="text" id="website" class="form-control"
+                                                           placeholder="Website">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="status">Status</label>
+                                                    <select name="status" class="form-control" style="color: grey">
+                                                        <option value="" hidden>Select one</option>
+                                                        <option value="1">Active</option>
+                                                        <option value="2">Inactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Search</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 hidden-sm hidden-xs">
+                            <table class="table table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th class="col-lg-2" style="text-align: right">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td class="text">
+                                            <a href="/users/view/{{ user.uuid }}">
+                                                {{ user.first_name }} {{ user.last_name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            {% if user.role == 1 %}
+                                                <span class="text-info"><strong>Admin</strong></span>
+                                            {% elseif user.role == 2 %}
+                                                <span class="text-success"><strong>Employee</strong></span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text">{{ user.department }}</td>
+                                        <td>
+                                            {% if user.status == 1 %}
+                                                <span class="label label-info">Active</span>
+                                            {% elseif user.status == 2 %}
+                                                <span class="label label-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="action_button">
+                                            <a href="/users/view/{{ user.uuid }}">
+                                                <span class="fa fa-cog info" data-toggle="tooltip"
+                                                      title="Details"></span>
+                                            </a>
+                                            <a href="/users/update/{{ user.uuid }}">
+                                                <span class="fa fa-edit green" data-toggle="tooltip"
+                                                      title="Edit"></span>
+                                            </a>
+                                            <a href="/users/delete/{{ user.uuid }}" onclick="return confirm('Are you sure to delete this user?');">
+                                                <span class="fa fa-remove red" data-toggle="tooltip"
+                                                      title="Remove"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <ul class="pagination pull-right">
+                                {% for page in 1..totalPage %}
+                                    <li><a href="/users?page={{ page }}"> {{ page }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class=" col-sm-12 visible-sm visible-xs">
+                            {% for user in users %}
+                                <div style="background: #eee;">
+                                    <ul class="list-group" style="padding: 1px;">
+                                        <li class="list-group-item"><strong>Name: </strong><a
+                                                    href="/users/view/{{ user.uuid }}">
+                                                {{ user.first_name }} {{ user.last_name }}
+                                            </a>
+                                        </li>
+                                        <li class="list-group-item"><strong>Email: </strong> {{ user.email }}</li>
+                                        <li class="list-group-item"><strong>Role: </strong>
+                                            {% if user.role == 1 %}
+                                                <span class="text-info">Admin</span>
+                                            {% elseif user.role == 2 %}
+                                                <span class="text-success">Employee</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="list-group-item"><strong>Department: </strong> {{ user.department }}
+                                        </li>
+                                        <li class="list-group-item"><strong>status: </strong>
+                                            <label>
+                                                {% if user.status == 1 %}
+                                                    <span class="label label-info">Active</span>
+                                                {% elseif user.status == 2 %}
+                                                    <span class="label label-danger">Inactive</span>
+                                                {% endif %}
+                                            </label>
+                                        </li>
+                                        <li class="list-group-item"><strong>Action: </strong>
+                                            <a href="/users/view/{{ user.uuid }}">
+                                                <span class="fa fa-cog info" data-toggle="tooltip"
+                                                      title="Details"></span>
+                                            </a>
+                                            <a href="/users/update/{{ user.uuid }}">
+                                                <span class="fa fa-edit green" data-toggle="tooltip"
+                                                      title="Edit"></span>
+                                            </a>
+                                            <a href="/users/delete/{{ user.uuid }}">
+                                                <span class="fa fa-remove red" data-toggle="tooltip"
+                                                      title="Remove"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <hr>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    {% include '/elements/no-data.twig' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+

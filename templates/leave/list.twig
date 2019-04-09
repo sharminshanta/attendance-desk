@@ -1,0 +1,188 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Leave List {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Leave
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>{{ typeTitle }} List</h2>
+                    <span>{{ leaveRequests.count }} Leave request found</span>
+                </div>
+
+                <div class="pull-right btn-toolbar">
+                    <div class="dropdown btn-group">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Choose Status
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            {% if typeTitle == 'pending' %}
+                                <li><a href="/leave/accepted">Accepted</a></li>
+                                <li><a href="/leave/denied">Denied</a></li>
+                            {% elseif typeTitle == 'accepted' %}
+                                <li><a href="/leave/pending">Pending</a></li>
+                                <li><a href="/leave/denied">Denied</a></li>
+                            {% elseif typeTitle == 'denied' %}
+                                <li><a href="/leave/pending">Pending</a></li>
+                                <li><a href="/leave/accepted">Accepted</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% if leaveRequests is empty %}
+
+                    {% else %}
+                        <div class="dropdown btn-group">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Choose Year
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {% for name in years %}
+                                    <li><a href="/leave/{{ typeTitle }}/{{ name.year }}">{{ name.year }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <a href="" class="btn btn-info" data-toggle="modal" data-target="#searchLeave">Search Leave</a>
+                    {% endif %}
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                {% if not leaveRequests is empty %}
+                    <div class="modal fade" id="searchLeave" tabindex="-1" role="dialog" aria-labelledby="searchLeave">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span></button>
+                                    <h4 class="modal-title" id="searchUser">Search Leave</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form" method="get" action="/leave/{{ typeTitle }}">
+                                        {% if session.auth.role == 1 %}
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label for="userid">Users</label>
+                                                        <select class="form-control" name="user_id">
+                                                            <option value="" hidden>Select one</option>
+                                                            {% for user in users %}
+                                                                <option value="{{ user.id }}">{{ user.first_name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label for="date">Date</label>
+                                                    <input name="date" type="date" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="start_date">Start Date</label>
+                                                    <input name="request_start_date" type="date" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="end_date">End Date</label>
+                                                    <input name="request_end_date" type="date" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Search</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table class="table table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Total Days</th>
+                                    <th>Type</th>
+                                    <th class="col-md-2" style="text-align: right">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for leaveRequest in leaveRequests %}
+                                    <tr>
+                                        <td class="text">
+                                            <a href="/leave/details/{{ leaveRequest.uuid }}">
+                                                {{ leaveRequest.user.first_name }} {{ leaveRequest.user.last_name }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if leaveRequest.status == 2 %}
+                                                {{ leaveRequest.confirm_start_date | date('M d, y') }}
+                                            {% else %}
+                                                {{ leaveRequest.request_start_date | date('M d, y') }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if leaveRequest.status == 2 %}
+                                                {{ leaveRequest.confirm_end_date | date('M d, y') }}
+                                            {% else %}
+                                                {{ leaveRequest.request_end_date | date('M d, y') }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if leaveRequest. status == 2 %}
+                                                {% set difference = date(leaveRequest.confirm_end_date | date('Y-m-d')).diff(date(leaveRequest.confirm_start_date | date('Y-m-d'))) %}
+                                                {% set leftDays = difference.days %}
+                                                {% if leftDays == 1 %}
+                                                    1 day
+                                                {% else %}
+                                                    {{ leftDays }} days
+                                                {% endif %}
+                                            {% else %}
+                                                {{ leaveRequest.leaveduration }} days
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ leaveRequest.typeYear.type.name }}
+                                        </td>
+                                        <td class="action_button btn-group-xs">
+                                            <a href="/leave/details/{{ leaveRequest.uuid }}"
+                                               title="Details"
+                                               class="btn btn-xs btn-primary">Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <ul class="pagination pull-right">
+                                {% for page in 1..totalPage %}
+                                    <li><a href="/leave/{{ typeTitle }}?page={{ page }}"> {{ page }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    {% include '/elements/no-data.twig' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

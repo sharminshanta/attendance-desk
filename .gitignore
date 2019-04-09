@@ -1,0 +1,7 @@
+/vendor/
+/logs/*
+!/logs/README.md
+.idea/*
+config.php
+public/assets/img/profiles/*
+!public/assets/img/profiles/.gitkeep

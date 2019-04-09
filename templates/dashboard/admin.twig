@@ -1,0 +1,64 @@
+{% extends "/layouts/application.twig" %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Dashboard
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Attendance of current month
+                    </div>
+                    <div class="panel-body">
+                        {% if attendanceInfo.count() != 0 %}
+                            <div id="morris-bar-chart"></div>
+                        {% else %}
+                            {% include '/elements/no-data.twig' %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-user fa-fw"></i> Today's attendance
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body no-padding">
+                        {% if data.count() != 0 %}
+                            <table class="table  table-hover" id="dataTables-example">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Ckeckin</th>
+                            <tr>
+                            </thead>
+                            <tbody>
+                            {% for user in data %}
+                                <tr>
+                                    <td>
+                                        {{ user.user.first_name }}
+                                    </td>
+                                    <td>
+                                        {{ user.check_in | date('h:i a') }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                            {% include '/elements/no-data.twig' %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

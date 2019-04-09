@@ -1,0 +1,13 @@
+{% if message %}
+    {% if message.success %}
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ message.success.0 }}
+        </div>
+    {% else %}
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ message.error.0 }}
+        </div>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,192 @@
+{% extends "/layouts/application.twig" %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage User
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <div class="pull-left">
+                        <h2>Update User</h2>
+                        <span>Provide all valid information to update user</span>
+                    </div>
+                </div>
+                <div class="pull-right btn-areas btn-margin">
+                    <a href="/users/add" class="btn btn-info">New Usre</a>
+                    <a href="/users/view/{{ user.uuid }}" class="btn btn-info">User Profile</a>
+                    <a href="/users/delete/{{ user.uuid }}"  onclick="return confirm('Are you sure to delete this user?');" class="btn btn-info">Delete User</a>
+                    <a href="/users" class="btn btn-info">User List</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                        <div class="">
+                            <a href="">
+                                {% if not users.profile_pic is empty %}
+                                    <img src="{{ users.profile_pic }}" class="avatar img-thumbnail" onerror="this.onerror=null;this.src='/assets/img/profiles/profile_pic.jpg'" alt="Profile Photo">
+                                {% else %}
+                                    <img src="/assets/img/profiles/profile_pic.jpg" class="avatar img-thumbnail" alt="Profile Photo">
+                                {% endif %}
+                            </a>
+                            <h6>Upload a different photo...</h6>
+                            <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#changeProfilePhoto">Change Photo</button>
+                        </div>
+                        <div class="modal fade" id="changeProfilePhoto" tabindex="-1" role="dialog" aria-labelledby="changeProfilePhotoLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title" id="changeProfilePhotoLabel">Change Profile Photo</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" accept-charset="utf-8" controller="users" enctype="multipart/form-data" action="/users/change-profile-picture/{{ user.uuid }}" class="ng-pristine ng-valid">
+                                            <div style="display:none;">
+                                                <input type="hidden" name="_method" value="POST">
+                                            </div>
+                                            <input name="photo" type="file" class="form-control well-sm" required="">
+                                            <br>
+                                            <button type="submit" class="btn btn-success">Change Photo</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- edit form column -->
+                    <div class="col-md-8 col-sm-8 col-xs-12 personal-info">
+                        <form class="form" method="post" action="/users/update/{{ users.uuid }}">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input name="first_name" type="text" value="{{ users.first_name }}" class="form-control">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.first_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input name="last_name" type="text" value="{{ users.last_name }}"  class="form-control">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.last_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select name="gender" class="form-control" style="color: grey">
+                                            <option value="male" {{ users.gender != 'male' ? '' : 'selected' }}>Male</option>
+                                            <option value="female" {{ users.gender != 'female' ? '' : 'selected' }}>Female</option>
+                                            <option value="others" {{ users.gender != 'others' ? '' : 'selected' }}>Others</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.gender.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input name="phone" type="text" value="{{ users.phone }}" class="form-control">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.phone.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="role">Role</label>
+                                        <select name="role" class="form-control" style="color: grey">
+                                            <option value="1" {{ users.role != 1 ? '' : 'selected' }}>Admin</option>
+                                            <option value="2" {{ users.role != 2 ? '' : 'selected' }}>Employee</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.role.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="birthdate">Birth Date</label>
+                                        <input name="birth_date" type="date" value="{{ users.date_of_birth | date('Y-m-d') }}" id="birthdate" class="form-control">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.birth_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="joindate">Joining Date</label>
+                                        <input name="join_date" type="date" value="{{ users.joined_date | date('Y-m-d') }}" id="joindate" class="form-control">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.join_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="department">Department</label>
+                                        <select name="department" class="form-control" style="color: grey">
+                                            <option value="software engineering" {{ users.department != 'software engineering' ? '' : 'selected' }}>Software Engineering</option>
+                                            <option value="web design" {{ users.department != 'web design' ? '' : 'selected' }}>Web Design</option>
+                                            <option value="search engine optimization" {{ users.department != 'search engine optimization' ? '' : 'selected' }}>Search Engine Optimization</option>
+                                            <option value="administration & accounting" {{ users.department != 'administration & accounting' ? '' : 'selected' }}>Administration & Accounting</option>
+                                            <option value="administration" {{ users.department != 'administration' ? '' : 'selected' }}>Administration</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.department.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select name="status" class="form-control" style="color: grey">
+                                            <option value="1" {{ users.status != 1 ? '' : 'selected' }}>Active</option>
+                                            <option value="2" {{ users.status != 2 ? '' : 'selected' }}>Inactive</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.status.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="website">Website</label>
+                                        <input name="website" type="text"  value="{{ users.website }}" id="website" class="form-control" placeholder="Website">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.website.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

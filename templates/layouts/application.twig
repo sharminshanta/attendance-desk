@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sharmin Shanta">
+    <meta name="author" content="Sharmin Shanta">
+    <link href="/assets/img/s.png" rel="icon">
+    <title>{% block title %}Dashboard{% endblock %} | Office Desk</title>
+
+    <!-- CSS libraries-->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/assets/css/linearicons/style.css" rel="stylesheet">
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/flat-checkin/flaticon.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+
+    <link href="/assest/css/morris.css" rel="stylesheet">
+
+    <!-- Inject css/js into top of the layout from another place -->
+    {% block cssTop %} {% endblock %}
+    {% block jsTop %} {% endblock %}
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/bootstrap-datetimepicker.css"/>
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/assets/js/html5shiv.min.js"></script>
+    <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        {% if session.auth.role == 1 %}
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="/dashboard">
+                        <img src="/assets/img/s.png" class="logo" alt="Logo"/>
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#users" class="collapsed"
+                       aria-expanded="false"><i class="fa fa-fw fa-users"></i> Users <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="users" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/users/add">Add</a>
+                        </li>
+                        <li>
+                            <a href="/users">List</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#attendance" class="collapsed"
+                       aria-expanded="false" style="color: yellow"><i class="fa fa-fw fa-user"></i> Attendance <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="attendance" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/attendance">List</a>
+                        </li>
+                        <li>
+                            <a href="/attendance/add">Add</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#leave" class="collapsed"
+                       aria-expanded="false"><i class="fa fa-calendar-minus-o"></i> Leave <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="leave" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/leave/pending">Pending List</a>
+                        </li>
+                        <li>
+                            <a href="/leave/accepted">Accepted List</a>
+                        </li>
+                        <li>
+                            <a href="/leave/denied">Denied List</a>
+                        </li>
+                        <li>
+                            <a href="/leave/reports">Overview</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#settings" class="collapsed"
+                       aria-expanded="false"><i class="fa fa-cogs"></i> Settings <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="settings" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/settings"> General</a>
+                        </li>
+                        <li>
+                            <a href="/leave/type"> Leave type</a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        {% elseif session.auth.role == 2 %}
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="/dashboard">
+                        <img src="/assets/img/s.png" class="logo" alt="Logo"/>
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#attendance" class="collapsed"
+                       aria-expanded="false" style="color: yellow"><i class="fa fa-fw fa-user"></i> Attendance <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="attendance" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/attendance">List</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#leave" class="collapsed"
+                       aria-expanded="false"><i class="fa fa-calendar-minus-o"></i> Leave <i
+                                class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="leave" class="submenu collapse" aria-expanded="false" style="height: 0px;">
+                        <li>
+                            <a href="/leave/create">Create leave</a>
+                        </li>
+                        <li>
+                            <a href="/leave/pending">Pending List</a>
+                        </li>
+                        <li>
+                            <a href="/leave/accepted">Accepted List</a>
+                        </li>
+                        <li>
+                            <a href="/leave/denied">Denied List</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        {% endif %}
+        <!-- Copyright area -->
+        <footer class="copyright">
+            <div class="container-fluid">
+                <p class="copy-text">Copyright <a href="https://sharminshanta.com" style="text-decoration: none">Sharmin Shanta</a> © {{ "now" | date("Y") }}</p>
+            </div>
+        </footer>
+        <!-- /Copyright area -->
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+        <button href="#menu-toggle" class="wrapper_toggle_btn" id="menu-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+        <div class="clearfix"></div>
+        <!-- Header -->
+        <div class="header">
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-lg-7 col-md-7 visible-lg visible-md">
+                    <div class="search_bar">
+                        <div class="input-group search_bar_input">
+                            <span class="input-group-addon">
+                                <button type="submit">
+                                    <span class="fa fa-search"></span>
+                                </button>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Search...">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    {% if office == 1 %}
+                        {% if userAttendanceRecord.check_in > userAttendanceRecord.check_out %}
+                            <a href="/attendance/checkout" title="Checkout" class="check out pull-right">
+                                <i class="fa fa-sign-out"></i>
+                            </a>
+                        {% else %}
+                            <a href="/attendance/checkin" title="Checkin" class="check in pull-right">
+                                <i class="fa fa-sign-in"></i>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    <div class="pull-right" style="padding-right: 21px">
+                        <div class="profile-overview">
+                            <div class="dropdown customm-dropdown">
+                                {% if not session.auth.profile_pic is empty %}
+                                    <img src="{{ session.auth.profile_pic }}" class="profile-pic"
+                                         onerror="this.onerror=null;this.src='/assets/img/profiles/profile_pic.jpg'"/>
+                                {% else %}
+                                    <img src="/assets/img/profiles/profile_pic.jpg" class="profile-pic"/>
+                                {% endif %}
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Hi, {{ session.auth.first_name }} {{ session.auth.last_name }}
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="/profile/"><i class="fa fa-user"></i> My profile</a></li>
+                                    <li><a href="#"><i class="fa fa-wrench"></i> Setting</a></li>
+                                    <li><a href="/logout"><i class="fa fa-power-off"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /#header -->
+
+        <!-- Content area -->
+        <div class="content-area">
+                    {% if office == 2 %}
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            {% if session.auth.role == 2 %}
+                                Office time didn't set. Contact with admin
+                            {% elseif session.auth.role == 1 %}
+                                attendance time did not configured Please click <a href="/settings" class="errorMessageLink">here</a> to set official attendance time
+                            {% endif %}
+                        </div>
+                        {#<br>#}
+                    {% endif %}
+                    {% include 'elements/flash.twig' %}
+            <!-- content overview -->
+            {% block content %} {% endblock %}
+        </div>
+        <!-- /#Content area -->
+
+        <!-- Footer area -->
+        <footer class="footer">
+
+        </footer>
+        <!-- /#Footer area -->
+    </div>
+    <!-- /#page-content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+
+<script src="/assets/js/jquery-2.2.0.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+<!-- Custom javascript -->
+<script src="/assets/js/theme.js"></script>
+<script src="/assets/js/custom.js"></script>
+<script src="/assets/js/moment.js"></script>
+<script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
+
+<!-- Morris Charts JavaScript -->
+<script src="/assets/js/raphael.min.js"></script>
+<script src="/assets/js/morris.js"></script>
+{#<script src="/assest/js/morris-data.js"></script>#}
+
+<!-- Inject css/js into bottom of the layout from another place -->
+{% block cssBottom %} {% endblock %}
+{% block jsBottom %}
+    {% include '/elements/morris-data.twig' %}
+{% endblock %}
+
+</body>
+</html>

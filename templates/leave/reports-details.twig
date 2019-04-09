@@ -1,0 +1,105 @@
+{% extends "/layouts/application.twig" %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Leave Reports
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>{{ userDetails.first_name }} {{ userDetails.last_name }}</h2>
+                </div>
+                <div class="pull-right btn-toolbar">
+                    <span class="btn-group status-button status-danger">Total Office Leave : {{ totalOfficeLeave }}</span>
+                    <span class="btn-group status-button status-orange">Total Taken Leave : {{ leaveReport.taken_days }}</span>
+                    <span class="btn-group status-button status-info">Total Remaining Leave : {{ leaveReport.remaining_days }}</span>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <!-- view form column -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 personal-info">
+                        {% for report in reports %}
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h2 class="pull-left">{{ report.name }}</h2>
+                                    <div class="btn-toolbar pull-right">
+                                        <span class="btn-group status-button status-green">Official Leave : {{ report.leave_official_days }}</span>
+                                        <span class="btn-group status-button status-orange">Taken Leave : {% if report.total_days == 1 or report.total_days == 0 %}
+                                                {{ report.total_days }} day
+                                            {% else %}
+                                                {{ report.total_days }} days
+                                            {% endif %}</span>
+                                        <span class="btn-group status-button status-info">Remaining Leave : {% if report.remaining_days == 1 or report.remaining_days == 0 %}
+                                                {{ report.remaining_days }} day
+                                            {% else %}
+                                                {{ report.remaining_days }} days
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="widget-body">
+                                    {% set leaveRequests = leaveModel.getLeaveDayByYear(report.user_id, report.type_year_id) %}
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Total Days</th>
+                                            <th class="col-md-2" style="text-align: right">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for leaveRequest in leaveRequests %}
+                                            <tr>
+                                                <td>
+                                                    {% if leaveRequest.status == 2 %}
+                                                        {{ leaveRequest.confirm_start_date | date('M d, y') }}
+                                                    {% else %}
+                                                        {{ leaveRequest.request_start_date | date('M d, y') }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if leaveRequest.status == 2 %}
+                                                        {{ leaveRequest.confirm_end_date | date('M d, y') }}
+                                                    {% else %}
+                                                        {{ leaveRequest.request_end_date | date('M d, y') }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if leaveRequest. status == 2 %}
+                                                        {% set difference = date(leaveRequest.confirm_end_date | date('Y-m-d')).diff(date(leaveRequest.confirm_start_date | date('Y-m-d'))) %}
+                                                        {% set leftDays = difference.days %}
+                                                        {% if leftDays == 1 %}
+                                                            1 day
+                                                        {% else %}
+                                                            {{ leftDays }} days
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {{ leaveRequest.leaveduration }} days
+                                                    {% endif %}
+                                                </td>
+                                                <td class="action_button btn-group-xs">
+                                                    <a href="/leave/details/{{ leaveRequest.uuid }}"
+                                                       title="Details"
+                                                       class="btn btn-xs btn-primary">Details</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,289 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Leave Details {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Leave
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>Leave Details</h2>
+                </div>
+                <div class="pull-right btn-areas btn-margin">
+                    <a href="/leave" class="btn btn-info">Leave List</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <div class="modal fade" id="changeLeave" tabindex="-1" role="dialog" aria-labelledby="changeLeave">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    <h4 class="modal-title" id="searchUser">Confirm leave</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/leave/confirm/{{ leaveRequest.uuid }}" method="post">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="start_date">Start Date</label>
+                                                    <input type="hidden" name="id" value="{{ leaveRequest.id }}">
+                                                    <input type="hidden" name="uuid" value="{{ leaveRequest.uuid }}">
+                                                    <input type="text"   id="datetimepicker1" class="form-control"  name="confirm_start_date">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <label for="end_date">End Date</label>
+                                                        <input type="text"  id="datetimepicker2" class="form-control" name="confirm_end_date">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <button class="btn btn-success">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-sm-8 col-xs-12 personal-info">
+                        <ul class="data-list data-list-stripe">
+                            <li class="text">
+                                <strong>Name: </strong> {{ leaveRequest.user.first_name }} {{ leaveRequest.user.last_name }}
+                            </li>
+                            <li class="text">
+                                <strong>Type: </strong>
+                                {{ leaveRequest.typeYear.type.name }}
+                            </li>
+                            <li>
+                                <strong>Start Date: </strong>
+                                {% if leaveRequest.status == 2 %}
+                                    {{ leaveRequest.confirm_start_date | date("M d, Y") }}
+                                {% else %}
+                                    {{ leaveRequest.request_start_date | date("M d, Y") }}
+                                {% endif %}
+                            </li>
+
+                            <li>
+                                <strong>End Date: </strong>
+                                {% if leaveRequest.status == 2 %}
+                                    {{ leaveRequest.confirm_end_date | date("M d, Y") }}
+                                {% else %}
+                                    {{ leaveRequest.request_end_date | date("M d, Y") }}
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Total Days</strong>
+                                {% if leaveRequest. status == 2 %}
+                                    {% set difference = date(leaveRequest.confirm_end_date | date('Y-m-d')).diff(date(leaveRequest.confirm_start_date | date('Y-m-d'))) %}
+                                    {% set leftDays = difference.days %}
+                                    {% if leftDays == 1 %}
+                                        1 day
+                                    {% else %}
+                                        {{ leftDays }} days
+                                    {% endif %}
+                                {% else %}
+                                    {% set difference = date(leaveRequest.request_end_date | date('Y-m-d')).diff(date(leaveRequest.request_start_date | date('Y-m-d'))) %}
+                                    {% set leftDays = difference.days %}
+                                    {% if leftDays == 1 %}
+                                        1 day
+                                    {% else %}
+                                        {{ leftDays }} days
+                                    {% endif %}
+                                {% endif %}
+                            </li>
+                            <li>
+                                <strong>Description: </strong>
+                                {{ leaveRequest.description | raw }}
+                            </li>
+                            {% if leaveRequest.status == 2 or leaveRequest.status == 3 %}
+                                <li class="text">
+                                    <strong>Approved By: </strong>
+                                    {{ leaveRequest.leaveApprovedBy.first_name }} {{ leaveRequest.leaveApprovedBy.last_name }}
+                                </li>
+                            {% endif %}
+                        </ul>
+                        {% if session.auth.role == 1 %}
+                            {% if leaveRequest.status == 2 or leaveRequest.status == 3 %}
+                            {% else %}
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="btn-toolbar">
+                                            <button class="btn btn-info btn-group"  data-toggle="modal" data-target="#changeLeave">Confirm</button>
+                                            <a href="/leave/cancel/{{ leaveRequest.uuid }}"  class="btn btn-danger btn-group" onclick="return confirm('Are you sure to cancel this?');">Cancel</a>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Status button -->
+                    <div class="col-lg-5">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                {% if leaveRequest.status == 1 %}
+                                    <span class="status-button status-orange">Pending</span>
+                                {% elseif leaveRequest.status == 2 %}
+                                    <span class="status-button status-info">Accepted</span>
+                                {% elseif leaveRequest.status == 3 %}
+                                    <span class="status-button status-red">Denied</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 leave-detail">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th class="col-lg-6">Total Leave</th>
+                                        <td class="font text-right">
+                                            {% if totalOfficedays == 1 %}
+                                                {{ totalOfficedays }} day
+                                            {% elseif totalOfficedays == 0 %}
+                                                0 day
+                                            {% elseif totalOfficedays == 'null' %}
+                                                0 day
+                                            {% else %}
+                                                {{ totalOfficedays }} days
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Taken Leave</th>
+                                        <td class="font text-right">
+                                            {% if leavreports.taken_days == 1 %}
+                                                {{ leavreports.taken_days }} day
+                                            {% elseif leavreports.taken_days == 0 %}
+                                                0 day
+                                            {% else %}
+                                                {{ leavreports.taken_days }} days
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Remaining Leave</th>
+                                        <td class="font text-right">
+                                            {% if  totalOfficedays - leavreports.taken_days == 1 %}
+                                                {{ totalOfficedays - leavreports.taken_days }} day
+                                            {% elseif totalOfficedays - leavreports.taken_days == 0 %}
+                                                {{ totalOfficedays - leavreports.taken_days }} day
+                                            {% else %}
+                                                {{ totalOfficedays - leavreports.taken_days }} days
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        {% if leaveStatCount.pending is empty %}
+                                            <span class="badge">0</span>
+                                        {% else %}
+                                            <span class="badge">{{ leaveStatCount.pending }}</span>
+                                        {% endif %}
+                                        Pending
+                                    </li>
+                                    <li class="list-group-item">
+                                        {% if leaveStatCount.accepted is empty %}
+                                            <span class="badge">0</span>
+                                        {% else %}
+                                            <span class="badge">{{ leaveStatCount.accepted }}</span>
+                                        {% endif %}
+                                        Accepted
+                                    </li>
+                                    <li class="list-group-item">
+                                        {% if leaveStatCount.denied is empty %}
+                                            <span class="badge">0</span>
+                                        {% else %}
+                                            <span class="badge">{{ leaveStatCount.denied }}</span>
+                                        {% endif %}
+                                        Denied
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block jsBottom %}
+    <!-- include summernote css/js-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote();
+        });
+
+        $('#summernote').summernote({
+            height: 300,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+            focus: true,                  // set focus to editable area after initializing summernote
+
+        });
+    </script><script language="javascript">
+    var counter = 0;
+    $(".add_more").on("click", function () {
+        counter++;
+        var newRow = $("");
+        var cols = "";
+        cols += '<div class="single_keyword"> ' +
+                '<div class="col-lg-12"> ' +
+                '<div class="form-group"> ' +
+                '<br>' +
+                '<div class="input text"> ' +
+                '<input type="file" name="attachments[' + counter + ']" class="form-control"> ' +
+                '</div> ' +
+                '</div> ' +
+                '</div> ' +
+                '<a class="deleteKeywordRow"> x </a></div>';
+        newRow.append(cols);
+        $("#form_box").append(cols);
+    });
+    $("div").on("click", "a.deleteKeywordRow", function (event) {
+        $(this).closest("div").remove();
+    });
+</script>
+    <script type="text/javascript">
+        $(function () {
+            var startDate = '{{ leaveRequest.request_start_date  | date('Y-m-d h:i:s') }}'
+            $('#datetimepicker1').datetimepicker({
+                defaultDate: startDate
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            var endDate = '{{ leaveRequest.request_end_date  | date('Y-m-d h:i:s') }}'
+            $('#datetimepicker2').datetimepicker({
+                defaultDate: endDate
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block cssTop %}
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+{% endblock %}

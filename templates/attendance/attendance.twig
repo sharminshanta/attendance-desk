@@ -1,0 +1,31 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Attendance {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Attendance
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if userAttendanceRecord.check_in > userAttendanceRecord.check_out %}
+                        <div class="checkout-btn">
+                            <a href="/attendance/checkout" class="btn btn-success btn-lg btn-block">
+                                <span class="attendance-button-text">checkout </span><i class="flaticon-arrows-1"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="checkin-btn">
+                            <a href="/attendance/checkin" class="btn btn-success btn-lg btn-block">
+                                <span class="attendance-button-text">Checkin</span><i class="flaticon-arrows"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

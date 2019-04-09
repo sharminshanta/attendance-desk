@@ -1,0 +1,185 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Users Create {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage User
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>New User</h2>
+                    <span>Provide all valid information to create a new user</span>
+                </div>
+                <div class="pull-right btn-areas">
+                    <a href="/users" class="btn btn-info">User List</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <!-- add form column -->
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 personal-info">
+                        <form class="form" method="post" action="/users/add"  enctype="multipart/form-data" >
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="firstName">Profile Picture</label>
+                                        <input name="profile_pic" type="file" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input name="first_name" type="text" class="form-control" value="{{ oldValue.first_name }}" placeholder="First name" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.first_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input name="last_name" type="text" class="form-control" value="{{ oldValue.last_name }}" placeholder="Last name" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.last_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input name="email" type="text" class="form-control" value="{{ oldValue.email }}" placeholder="Email address" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.email.0 }}</span>
+                                        {% endif %}
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.1.0.1}}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input name="phone" type="text" class="form-control" value="{{ oldValue.phone }}"  placeholder="Phone" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.phone.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select name="gender" class="form-control" style="color: grey" >
+                                            <option value="" hidden>Select one</option>
+                                            <option value="male" {{ oldValue.gender == 'male' ? 'selected' : '' }}>Male</option>
+                                            <option value="female" {{ oldValue.gender == 'female' ? 'selected' : '' }}>Female</option>
+                                            <option value="others" {{ oldValue.gender == 'others' ? 'selected' : '' }}>Others</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.gender.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="birthdate">Birth Date</label>
+                                        <input name="birth_date" type="date" id="birthdate"  value="{{ oldValue.birth_date }}" class="form-control" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.birth_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="role">Role</label>
+                                        <select name="role" class="form-control" style="color: grey" >
+                                            <option value="" hidden>Select one</option>
+                                            <option value="1" {{ oldValue.role == 1 ? 'selected' : '' }}>Admin</option>
+                                            <option value="2" {{ oldValue.role == 2 ? 'selected' : '' }}>Employee</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.role.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="department">Department</label>
+                                        <select name="department" class="form-control" style="color: grey" >
+                                            <option value="" hidden>Select one</option>
+                                            <option value="software engineering" {{ oldValue.department == 'software engineering' ? 'selected' : '' }}>Software Engineering</option>
+                                            <option value="web design" {{ oldValue.department == 'web design' ? 'selected' : '' }}>Web Design</option>
+                                            <option value="search engine optimization" {{ oldValue.department == 'search engine optimization' ? 'selected' : '' }}>Search Engine Optimization</option>
+                                            <option value="administration & accounting" {{ oldValue.department == 'administration & accounting' ? 'selected' : '' }}>Administration & Accounting</option>
+                                            <option value="administration" {{ oldValue.department == 'administration' ? 'selected' : '' }}>Administration</option>
+                                        </select>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.department.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="joindate">Joining Date</label>
+                                        <input name="join_date" type="date" id="joindate" value="{{ oldValue.join_date }}" class="form-control" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.join_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="website">Website</label>
+                                        <input name="website" type="text" id="website" class="form-control" value="{{ oldValue.website }}" placeholder="Website">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.website.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input name="password" type="password" class="form-control" placeholder="Password" >
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.password.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <input name="confirm_password" type="password" class="form-control" placeholder="Confirm password">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.confirm_password.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

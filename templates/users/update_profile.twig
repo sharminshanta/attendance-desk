@@ -1,0 +1,132 @@
+{% extends "/layouts/application.twig" %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Profile
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <div class="pull-left">
+                        <h2>Update Profile</h2>
+                        <span>Provide all valid information to update profile</span>
+                    </div>
+                </div>
+                <div class="pull-right btn-areas btn-margin">
+                    <a href="/profile/" class="btn btn-info">My Profile</a><a href="/profile/update" class="btn btn-info">Update Profile</a><a href="/profile/change-password" class="btn btn-info">Change Password</a></div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                        <div class="">
+                            <a href="">
+                                {% if not user.profile_pic is empty %}
+                                    <img src="{{ user.profile_pic }}" class="avatar img-thumbnail"  onerror="this.onerror=null;this.src='/assets/img/profiles/profile_pic.jpg'" alt="Profile Photo">
+                                {% else %}
+                                    <img src="/assets/img/profiles/profile_pic.jpg" class="avatar img-thumbnail" alt="Profile Photo">
+                                {% endif %}
+                            </a>
+                            <h6>Upload a different photo...</h6>
+                            <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#changeProfilePhoto">Change Photo</button>
+                        </div>
+                        <div class="modal fade" id="changeProfilePhoto" tabindex="-1" role="dialog" aria-labelledby="changeProfilePhotoLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title" id="changeProfilePhotoLabel">Change Profile Photo</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" accept-charset="utf-8" controller="users" enctype="multipart/form-data" action="/profile/change-profile-picture" class="ng-pristine ng-valid">
+                                            <div style="display:none;">
+                                                <input type="hidden" name="_method" value="POST">
+                                            </div>
+                                            <input name="photo" type="file" class="form-control well-sm" required="">
+                                            <br>
+                                            <button type="submit" class="btn btn-success">Change Photo</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- edit form column -->
+                    <div class="col-md-8 col-sm-8 col-xs-12 personal-info">
+                        <form class="form" method="post" action="/profile/update">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input name="first_name" type="text" value="{{ user.first_name }}" class="form-control" placeholder="First name">
+                                        {% if errors !=NULL %}
+                                            <span class="error-text">{{ errors.first_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input name="last_name" type="text" value="{{ user.last_name }}"  class="form-control" placeholder="Last name">
+                                        {% if errors !=NULL %}
+                                            <span class="error-text">{{ errors.last_name.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input name="email" type="email" value="{{ user.email }}"  class="form-control" disabled="disable" placeholder="Email address">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <select name="gender" class="form-control" style="color: grey">
+                                            <option value="male" {{ user.gender != 'male' ? '' : 'selected' }}>Male</option>
+                                            <option value="female" {{ user.gender != 'female' ? '' : 'selected' }}>Female</option>
+                                            <option value="others" {{ user.gender != 'others' ? '' : 'selected' }}>Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="birthdate">Birth date</label>
+                                        <input name="birth_date" type="date" value="{{ user.date_of_birth | date('Y-m-d') }}" class="form-control">
+                                        {% if errors !=NULL %}
+                                            <span class="error-text">{{ errors.birth_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="website">Website</label>
+                                        <input name="website" type="text" value="{{ user.website }}"  class="form-control" placeholder="Website">
+                                        {% if errors !=NULL %}
+                                            <span class="error-text">{{ errors.website.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

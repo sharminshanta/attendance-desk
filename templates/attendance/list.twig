@@ -1,0 +1,229 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Attendance List {% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Attendance
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>Attendance List</h2>
+                    <span>{{ count }} attendance found</span>
+                </div>
+                <div class="pull-right btn-areas">
+                    {% if attendances is  not empty %}
+                        <a href="" class="btn btn-info" data-toggle="modal" data-target="#searchUser">Search Attendance</a>
+                    {% elseif attendances is empty %}
+                        <a href="/attendance" class="btn btn-info">Attendance List</a>
+                    {% endif %}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                {% if not attendances is empty %}
+                    <div class="row">
+                        <div class="modal fade" id="searchUser" tabindex="-1" role="dialog"
+                             aria-labelledby="searchUser">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title" id="searchUser">Search Attendance</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="form" method="get" action="/attendance">
+                                            {% if session.auth.role == 1 %}
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label for="userid">Users</label>
+                                                            <select class="form-control" name="user_id">
+                                                                <option value="" hidden>Select one</option>
+                                                                {% for user in users %}
+                                                                    <option value="{{ user.id }}">{{ user.first_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <label for="date">Date</label>
+                                                        <input name="date" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="start_date">Start Date</label>
+                                                        <input name="start_date" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="end_date">End Date</label>
+                                                        <input name="end_date" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="checkin">Check in</label>
+                                                        <input name="check_in" type="time" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="checkout">Check out</label>
+                                                        <input name="check_out" type="time" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="status">Status</label>
+                                                        <select name="status" class="form-control" style="color: grey">
+                                                            <option value="" hidden>Select one</option>
+                                                            <option value="1">Regular</option>
+                                                            <option value="2">Late</option>
+                                                            <option value="3">Absent</option>
+                                                            <option value="4">Leave</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                {% if session.auth.role == 1 %}
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label for="department">Department</label>
+                                                            <select name="department" class="form-control"
+                                                                    style="color: grey">
+                                                                <option value="" hidden>Select one</option>
+                                                                <option value="software engineering">Software
+                                                                    Engineering
+                                                                </option>
+                                                                <option value="web design">Web Design</option>
+                                                                <option value="search engine optimization">Search Engine
+                                                                    Optimization
+                                                                </option>
+                                                                <option value="administration & accounting">
+                                                                    Administration & Accounting
+                                                                </option>
+                                                                <option value="administration">Administration</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="row">
+
+                                            </div>
+                                            <button type="submit" class="btn btn-success">Search</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Check in</th>
+                                    <th>Check out</th>
+                                    <th>Total Hour</th>
+                                    <th>Working Hour</th>
+                                    <th>Leisure Time</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for attendance in attendances %}
+                                    <tr>
+                                        <td class="text">
+                                            <a href="/attendance/details/{{ attendance.user.uuid }}/{{ attendance.date | date('Y-m-d') }}">
+                                                {{ attendance.user.first_name }} {{ attendance.user.last_name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ attendance.date | date('M d, y') }}</td>
+                                        <td>
+                                            {% if attendance.check_in is not null %}
+                                                {{ attendance.check_in | date('h:i a') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if attendance.check_out is not null %}
+                                                {{ attendance.check_out | date('h:i a') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if attendance.total_hour is not null %}
+                                                {{ attendance.total_hour }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if attendance.working_hour is not null %}
+                                                {{ attendance.working_hour }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if attendance.leisure_time is not null %}
+                                                {{ attendance.leisure_time }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if attendance.status == 1 %}
+                                                <span class="label label-success">Regular</span>
+                                            {% elseif attendance.status == 2 %}
+                                                <span class="label label-warning">Late</span>
+                                            {% elseif attendance.status == 3 %}
+                                                <span class="label label-danger">Absent</span>
+                                            {% elseif attendance.status == 4 %}
+                                                <span class="label label-info">Leave</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="action_button btn-group-xs">
+                                            <a href="/attendance/details/{{ attendance.user.uuid }}/{{ attendance.date | date('Y-m-d') }}"
+                                               title="Details" class="btn btn-xs btn-primary">Details</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <ul class="pagination pull-right">
+                                {% for page in 1..totalPage %}
+                                    <li><a href="/attendance?page={{ page }}"> {{ page }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    {% include '/elements/no-data.twig' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

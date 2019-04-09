@@ -1,0 +1,24 @@
+{% extends 'layouts/login.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6 col-sm-offset-3">
+            {% include 'elements/flash.twig' %}
+            <form class="form-signin" method="post" action="">
+                <h2 class="form-signin-heading">Please login</h2>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="email" placeholder="Email Address" required="" autofocus="" />
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button><br>
+                <div class="row mail">
+                    <div class="col-lg-6">
+                        <a href="/forgot-pwd" class="email">Forgot password?</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

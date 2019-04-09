@@ -1,0 +1,234 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Leave Create {% endblock %}
+{% block content %}
+    {% if leaveTypes is empty %}
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ typeErrorMessage}}
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Leave
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="widget">
+            <div class="widget-header">
+                <div class="pull-left">
+                    <h2>Leave request</h2>
+                    <span>Provide all valid information to request leave</span>
+                </div>
+                <div class="pull-right btn-areas btn-margin">
+                    <a href="/leave" class="btn btn-info">Leave List</a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <div class="col-md-7 personal-info">
+                        <form action="/leave/create" method="post">
+                            <div class="12">
+                                <div class="form-group">
+                                    <label for="type">Type</label>
+                                    <select class="form-control" name="type_year_id">
+                                        <option value="" hidden>Select one</option>
+                                        {% for leaveType in leaveTypes %}
+                                            <option value="{{ leaveType.id }}" {{ oldValue.type_year_id ==  leaveType.id ? 'selected' : '' }}>{{ leaveType.type.name | capitalize }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if errors != NULL %}
+                                        <span class="error-text">{{ errors.type_year_id.0 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="start_date">Start Date</label>
+                                        <input type="text" id="datetimepicker1" class="form-control" name="request_start_date" value="{{ oldValue.request_start_date }}">
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.request_start_date.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label for="end_date">End Date</label>
+                                            <input type="text" id="datetimepicker2" class="form-control" name="request_end_date" value="{{ oldValue.request_end_date }}">
+                                            {% if errors != NULL %}
+                                                <span class="error-text">{{ errors.request_end_date.0 }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea name="description" id="summernote">{{ oldValue.description }}</textarea>
+                                        {% if errors != NULL %}
+                                            <span class="error-text">{{ errors.description.0 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                {% if leaveTypes is empty %}
+                                    <div class="col-lg-3">
+                                        <button class="btn btn-success" disabled="disabled">Submit</button>
+                                    </div>
+                                {% else %}
+                                    <div class="col-lg-3">
+                                        <button class="btn btn-success">Submit</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Status button -->
+                    <div class="col-lg-5">
+                        <div class="col-lg-12 leave-detail">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th class="col-lg-6">Total Leave</th>
+                                    <td class="font text-right">
+                                        {% if totalOfficedays == 1 %}
+                                            {{ totalOfficedays }} day
+                                        {% elseif totalOfficedays == 0 %}
+                                            0 day
+                                        {% elseif totalOfficedays == 'null' %}
+                                            0 day
+                                        {% else %}
+                                            {{ totalOfficedays }} days
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Taken Leave</th>
+                                    <td class="font text-right">
+                                        {% if leavreports.taken_days == 1 %}
+                                            {{ leavreports.taken_days }} day
+                                        {% elseif leavreports.taken_days == 0 %}
+                                            0 day
+                                        {% else %}
+                                            {{ leavreports.taken_days }} days
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Remaining Leave</th>
+                                    <td class="font text-right">
+                                        {% if  totalOfficedays - leavreports.taken_days == 1 %}
+                                            {{ totalOfficedays - leavreports.taken_days }} day
+                                        {% elseif totalOfficedays - leavreports.taken_days == 0 %}
+                                            {{ totalOfficedays - leavreports.taken_days }} day
+                                        {% else %}
+                                            {{ totalOfficedays - leavreports.taken_days }} days
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-lg-12">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    {% if leaveStatCount.pending is empty %}
+                                        <span class="badge">0</span>
+                                    {% else %}
+                                        <span class="badge">{{ leaveStatCount.pending }}</span>
+                                    {% endif %}
+                                    Pending
+                                </li>
+                                <li class="list-group-item">
+                                    {% if leaveStatCount.accepted is empty %}
+                                        <span class="badge">0</span>
+                                    {% else %}
+                                        <span class="badge">{{ leaveStatCount.accepted }}</span>
+                                    {% endif %}
+                                    Accepted
+                                </li>
+                                <li class="list-group-item">
+                                    {% if leaveStatCount.denied is empty %}
+                                        <span class="badge">0</span>
+                                    {% else %}
+                                        <span class="badge">{{ leaveStatCount.denied }}</span>
+                                    {% endif %}
+                                    Denied
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block jsBottom %}
+    <!-- include summernote css/js-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                height: 300,                 // set editor height
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true,                  // set focus to editable area after initializing summernote
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            });
+        });
+    </script>
+    <script language="javascript">
+        var counter = 0;
+        $(".add_more").on("click", function () {
+            counter++;
+            var newRow = $("");
+            var cols = "";
+            cols += '<div class="single_keyword"> ' +
+                    '<div class="col-lg-12"> ' +
+                    '<div class="form-group"> ' +
+                    '<br>' +
+                    '<div class="input text"> ' +
+                    '<input type="file" name="attachments[' + counter + ']" class="form-control"> ' +
+                    '</div> ' +
+                    '</div> ' +
+                    '</div> ' +
+                    '<a class="deleteKeywordRow"> x </a></div>';
+            newRow.append(cols);
+            $("#form_box").append(cols);
+        });
+        $("div").on("click", "a.deleteKeywordRow", function (event) {
+            $(this).closest("div").remove();
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker2').datetimepicker();
+        });
+    </script>
+{% endblock %}
+
+{% block cssTop %}
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+{% endblock %}

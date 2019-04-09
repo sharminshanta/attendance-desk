@@ -1,0 +1,284 @@
+{% extends "/layouts/application.twig" %}
+{% block title %} Leave Type {% endblock %}
+{% block content %}
+    {% if leaveTypes is empty %}
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ typeErrorMessage}}
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2 class="title pull-left">
+                Manage Leave Day
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="widget">
+                    <div class="widget-header">
+                        <div class="pull-left">
+                            <h2>New days</h2>
+                            <span>Provide all valid information to add days and year</span>
+                        </div>
+                        <div class="pull-right">
+                            <a href="" class="btn btn-info" data-toggle="modal"
+                               onclick="$('#addDaysYear').modal({'backdrop': 'static'});">Create Type
+                            </a>
+                        </div>
+                        <div class="clearfix"></div>
+                        {#<h2>New days</h2>
+                        <span>Provide all valid information to add days and year</span>
+                        <div class="pull-right btn-areas">
+                            <a href="" class="btn btn-info" data-toggle="modal"
+                               onclick="$('#addDaysYear').modal({'backdrop': 'static'});">Create Type</a>
+                        </div>
+                        <div class="clearfix"></div>#}
+                    </div>
+                    <div class="widget-body">
+                        <form action="/leave/day" method="post">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="form-type">Leave Type</label>
+                                        <select class="form-control" name="leave_type_id" required>
+                                            <option value="" hidden>Select one</option>
+                                            {% for leaveType in leaveTypes %}
+                                                <option value="{{ leaveType.id }}">{{ leaveType.name | capitalize }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form-type">Day</label>
+                                        <input type="number" class="form-control" placeholder="Day" name="days"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form-type">Year</label>
+                                        <select name="year" id="" class="form-control" required>
+                                            <option value="" hidden>Choose Year</option>
+                                            {% set years = 'now'|date('Y') - 1 %}
+                                            {% for page in 1..4 %}
+                                                {% set years = years + 1 %}
+                                                <option value="{{ years }}" {{ years == now |date("Y") ? 'selected'}}>{{ years }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {% if leaveTypes is empty %}
+                                        <div class="col-lg-3">
+                                            <button class="btn btn-success" disabled="disabled">Submit</button>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-lg-3">
+                                            <button class="btn btn-success">Submit</button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Leave Days and types as Year -->
+            <div class="col-lg-6 col-md-7 col-sm-12 col-xs-12">
+                {% for typerecord in typeYear %}
+                    {% set types = typeYearModel.getLeaveDayByYear1(typerecord.year) %}
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h2 class="pull-left">Leave Year - {{ typerecord.year }}</h2>
+                            <span class="pull-right status-button status-success">Total Days : {{ typerecord.totaldays }}</span>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="widget-body">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th class="col-md-2">Type</th>
+                                    <th class="col-md-2">Days</th>
+                                    <th class="col-md-2" style="text-align: right">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for typerecord2 in types %}
+                                    <tr>
+                                        <td class="text">{{ typerecord2.type.name }}</td>
+                                        <td>{{ typerecord2.days }}</td>
+                                        <td class="action_button btn-group-xs">
+                                            <a class="updateDayYear" data-toggle="modal"
+                                               data-name="{{ typerecord2.type.id }}"
+                                               data-day="{{ typerecord2.days }}"
+                                               data-year="{{ typerecord2.year }}"
+                                               data-id="{{ typerecord2.id }}">
+                                                <span class="fa fa-pencil"></span>
+                                            </a>
+                                            <a href="/leave/delete/{{ typerecord2.id }}"
+                                               onclick="return confirm('Are you sure to delete this item?');">
+                                                <span class="fa fa-remove red" data-toggle="tooltip"
+                                                      title="Remove"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- type Modal -->
+    <div class="modal fade" id="addDaysYear" tabindex="-1" role="dialog" aria-labelledby="searchUser">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="searchUser">Create Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form" method="post" action="/leave/type">
+                        <div id="dynamicForm">
+
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="type" name="name[]" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div id="addMoreOption">
+
+                                </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12" id="addMoreBtn">
+                                <div class="form-group">
+                                    <button class=" btn-sm btn-primary fa fa-plus  add-more-btn" id="addMoreField">
+                                        Add more
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Update Modal -->
+    <div class="modal fade" id="updateDayYear" tabindex="-1" role="dialog" aria-labelledby="searchUser">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="searchUser">Change Leave Days</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/leave/update" method="post">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="form-type">Leave Type</label>
+                                    <select class="form-control" id="dataName" disabled>
+                                        <option value="" hidden>Select one</option>
+                                        {% for leaveType in leaveTypes %}
+                                            <option value="{{ leaveType.id }}">{{ leaveType.name | capitalize }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="leave_type_id" value="{{ leaveType.id }}">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="form-type">Day</label>
+                                    <input id="dataDay" type="number" value="{{ typeDayYear.days }}"
+                                           class="form-control" name="days">
+                                    <input id="dataId" type="hidden" value="{{ typeDayYear.id }}" class="form-control"
+                                           name="id">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block jsBottom %}
+    <!-- include summernote css/js-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".updateDayYear").click(function () {
+                var typeName = $(this).data('name');
+                $("#dataName").val(typeName);
+                $("#dataDay").val($(this).data('day'));
+                $("#dataYear").val($(this).data('year'));
+                $("#dataId").val($(this).data('id'));
+
+
+                $('#updateDayYear').modal('show');
+            });
+        });
+
+        $('#addMoreField').click(function (e) {
+            var max_field = 10;
+            var x = 1;
+            e.preventDefault();
+            if (x < max_field) {
+                x++;
+                $('#addMoreOption').append(
+                        '<div class="row"><div class="col-md-10">' +
+                        '<div class="form-group">' +
+                        '<input type="text" class="form-control"  placeholder="type" name="name[]" required>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-md-2">' +
+                        '<a id="removeField" class="btn-small btn-small-red check-class" style="position: relative;top: 13px;">Remove</a>' +
+                        '</div>' +
+                        '</div></div>');
+            }
+        });
+        $('#dynamicForm').on('click', "#removeField", function (e) {
+            e.preventDefault();
+            $(this).parent('div').parent('div.row').remove();
+
+        });
+
+    </script>
+{% endblock %}
+
+{% block cssTop %}
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+{% endblock %}
